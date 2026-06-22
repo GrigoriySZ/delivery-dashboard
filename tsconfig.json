@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "es2025",
+    "lib": ["ES2025", "DOM", "DOM.Iterable"],
+    "module": "esnext", 
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true, 
+    "isolatedModules": true, 
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    // СТРОГИЙ КОНТРОЛЬ КОДА
+    "strict": true,  // Полный набор строгих проверок типов
+    "noImplicitAny": true,  // Запрет неявного просвоения типа any при невозможности вывода
+    "strictNullChecks": true,  // Позволит разделять типы данных и null и undefined
+    "strictFunctionTypes": true, 
+    "noUnusedParameters": true,  // Запрет на неиспользуемые входные параметры
+    "noUnusedLocals": true, 
+    "noFallthroughCasesInSwitch": true,  // Запред 
+    "skipLibCheck": true,  // Пропускаем проверку модульных файлов библиотек
+
+    // УСТАНАВЛИВАЕМ АБСОЛЮТНЫЕ ПУТИ
+    "baseUrl": ".",
+    "paths": {
+      "@/*":["src/*"]
+    }
+  },
+  "references": [{ "path": "./tsconfig.node.json" }],
+  "include": ["src"]  // Область сканирования компилятора
+}
