@@ -37,35 +37,33 @@ export const DeliveryCard = ({order, onSelectedOrder}:DelveryCardProps): JSX.Ele
                 }}>
                     {order.status}
                 </span>
-                <p>Адрес: {order.customAdress}</p>
-                <p>Количество товаров: {order.itemsCount}</p>
-                <p>Общая сумма: {order.totalPrice}</p>
-                
-                {order.assignedCourier ? (
-                    <p style={{color: '#485563'}}>
-                        <b>Курьер</b> 
-                        {order.assignedCourier.name}
-                        ({order.assignedCourier.trasport})
-                    </p>
-                ) : (
-                    <p style={{color: '#dc2626'}}>
-                        Ожидает назначения курьера
-                    </p>
-                )}
-                <button
-                    onClick={() => onSelectedOrder(order.id)}
-                    style={{
-                        backgroundColor: '#4f46e5',
-                        color: '#fff',
-                        border: 'none',
-                        padding: '8px 12px',
-                        marginTop: '8px',
-                        width: '100%'
-                    }}
-                >
-                    Управление заказом
-                </button>
             </div>
+            <p>Адрес: {order.customAdress}</p>
+            <p>Количество товаров: {order.itemsCount}</p>
+            <p>Общая сумма: {order.totalPrice}</p>
+            
+            {order.assignedCourier ? (
+                <p style={{color: '#485563'}}>
+                    <b>Курьер: </b>{order.assignedCourier.name} ({order.assignedCourier.transport})
+                </p>
+            ) : (
+                <p style={{color: '#dc2626'}}>
+                    Ожидает назначения курьера
+                </p>
+            )}
+            <button
+                onClick={() => onSelectedOrder(order.id)}
+                style={{
+                    backgroundColor: '#4f46e5',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '8px 12px',
+                    marginTop: '8px',
+                    width: '100%'
+                }}
+            >
+                Управление заказом
+            </button>
         </div>
     )
 }

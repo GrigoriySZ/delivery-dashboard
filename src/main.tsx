@@ -1,10 +1,11 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App.tsx'
+import DashboardConsole from './App.tsx'
+import { DeliveryProvider } from './context/DeliveryContext.tsx'
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
+  <DeliveryProvider>
+    <DashboardConsole />
+  </DeliveryProvider>,
 )

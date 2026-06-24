@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 import { DeliveryOrder, DeliveryStatus } from "../types/delivery";
 
 // ГЛОБАЛЬНОЕ СОСТОЯНИЕ ДЛЯ ОТВЛЕЖИВАНИЯ ЖИЗНЕННОГО ЦИКЛА ДАННЫХ
@@ -97,4 +97,12 @@ export const DeliveryProvider = ({children}: {children: ReactNode}): JSX.Element
             {children}
         </DeliveryContext.Provider>
     );
+}
+
+export const useDelivery = () => {
+    const context = useContext(DeliveryContext);
+    if (!context) {
+        throw new Error('ERROR');
+    }
+    return context;
 }

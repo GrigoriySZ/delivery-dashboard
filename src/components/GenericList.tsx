@@ -7,7 +7,7 @@ interface GenericListProps<T> {
     emptyPlaceholder: string;
 }
 
-export const GenericList = <T,>({items, renderItem, emptyPlaceholder}: GenericListProps): JSX.Element => {
+export const GenericList = <T,>({items, renderItem, emptyPlaceholder}: GenericListProps<T>): JSX.Element => {
     if (items.length === 0) {
         return <p style={{
             textAlign: 'center',
