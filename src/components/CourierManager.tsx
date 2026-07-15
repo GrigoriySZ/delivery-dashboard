@@ -1,33 +1,37 @@
 import { useState } from "react";
-import { Courier, TransportType } from "../types/delivery";
+import { TransportType } from "../types/delivery";
+import { useDelivery } from "../context/DeliveryContext";
 
 export const CourierManager = (): JSX.Element => {
 
-    const [couriers, setCouriers] = useState<Courier[]>([
-        {id: 'C1', name: 'Иван Иванов', phone: '+79999999999', transport: 'Car', currentOrderId: null},
-        {id: 'C2', name: 'Павел Павлович', phone: '+7991112233', transport: 'Bicycle', currentOrderId: null},
-    ]);
-    const [selectedTransport, setSelectedTransport] = useState<TransportType | null>(null);
+    const { }
 
-    const [newCourierName, setNewCourierName] = useState<string>('');
+    // const [couriers, setCouriers] = useState<Courier[]>([
+    //     {id: 'C1', name: 'Иван Иванов', phone: '+79999999999', transport: 'Car', currentOrderId: null},
+    //     {id: 'C2', name: 'Павел Павлович', phone: '+7991112233', transport: 'Bicycle', currentOrderId: null},
+    // ]);
 
-    // Функция добавления 
-    const handleAddCourier = (e: React.SubmitEvent) => {
-        e.preventDefault();
-        if(!newCourierName.trim() || !selectedTransport) return;
+    // const [selectedTransport, setSelectedTransport] = useState<TransportType | null>(null);
 
-        const newCourier: Courier = {
-            id: `C${Date.now()}`,
-            name: newCourierName || '',
-            phone: '000',
-            transport: selectedTransport,
-            currentOrderId: null
-        };
+    // const [newCourierName, setNewCourierName] = useState<string>('');
 
-        setCouriers((prev) => [...prev, newCourier]);
-        setNewCourierName('');
-        setSelectedTransport(null);
-    };
+    // // Функция добавления 
+    // const handleAddCourier = (e: React.SubmitEvent) => {
+    //     e.preventDefault();
+    //     if(!newCourierName.trim() || !selectedTransport) return;
+
+    //     const newCourier: Courier = {
+    //         id: `C${Date.now()}`,
+    //         name: newCourierName || '',
+    //         phone: '000',
+    //         transport: selectedTransport,
+    //         currentOrderId: null
+    //     };
+
+    //     setCouriers((prev) => [...prev, newCourier]);
+    //     setNewCourierName('');
+    //     setSelectedTransport(null);
+    // };
 
     return (
         <div

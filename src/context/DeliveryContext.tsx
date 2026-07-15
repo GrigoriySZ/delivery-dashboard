@@ -1,98 +1,157 @@
-import { createContext, useContext, useState, ReactNode } from "react";
-import { DeliveryOrder, DeliveryStatus } from "../types/delivery";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { DeliveryOrder, DeliveryStatus, Courier, TransportType } from "../types/delivery";
 
-// ГЛОБАЛЬНОЕ СОСТОЯНИЕ ДЛЯ ОТВЛЕЖИВАНИЯ ЖИЗНЕННОГО ЦИКЛА ДАННЫХ
+// ГЛОБАЛЬНОЕ СОСТОЯНИЕ ДЛЯ ОТCЛЕЖИВАНИЯ ЖИЗНЕННОГО ЦИКЛА ДАННЫХ
 type DeliveryState = 
     | {status: 'LOADING'}
-    | {status: 'SUCCESS'; data: DeliveryOrder[]}
+    | {status: 'SUCCESS'; data: DeliveryOrder[]; couriers: Courier[]}
     | {status: 'ERROR'; message: string};
 
 interface DeliveryContextType {
     state: DeliveryState;
     updateOrderStatus: (orderId: string, nextStatus: DeliveryStatus) => void;
     assignCourierToOrder: (orderId: string, courierName: string) => void;
+    addCourier: (name: string, transport: TransportType) => void;
 }
 
 // undefined нужен для перехвата ошибок вызова вне провайдера
 const DeliveryContext = createContext<DeliveryContextType | undefined>(undefined);
 
+// Изначальные данные 
+const InitialState: DeliveryState = {
+    status: 'SUCCESS',
+    data: [
+        {
+            id: '101',
+            customAdress: 'Lenina St',
+            totalPrice: 1500,
+            itemsCount: 3,
+            status: 'Pending',
+            assignedCourier: null,
+            createdAt: '2026-06-22'
+        }, {
+            id: '102',
+            customAdress: 'Sovetskaya St',
+            totalPrice: 3500,
+            itemsCount: 1,
+            status: 'In_Transit',
+            assignedCourier: {
+                id: 'C1', 
+                name: 'Ivan Ivanov', 
+                phone: '+79999999999', 
+                transport: 'Car', 
+                currentOrderId: null
+            },
+            createdAt: '2026-06-22'
+        }, {
+            id: '103',
+            customAdress: 'Frunze St',
+            totalPrice: 2500,
+            itemsCount: 2,
+            status: 'Delivered',
+            assignedCourier: {
+                id: 'C2', 
+                name: 'Petr Petrov', 
+                phone: '+7991112233', 
+                transport: 'Bicycle', 
+                currentOrderId: null
+            },
+            createdAt: '2026-06-23'
+        }
+    ],
+    couriers: [
+        {id: 'C1', name: 'Ivan Ivanov', phone: '+79999999999', transport: 'Car', currentOrderId: null},
+        {id: 'C2', name: 'Petr Petrov', phone: '+7991112233', transport: 'Bicycle', currentOrderId: null}
+    ]
+};
+
 export const DeliveryProvider = ({children}: {children: ReactNode}): JSX.Element => {
-    
-    const [state, setState] = useState<DeliveryState>({
-        status: 'SUCCESS',
-        data: [
-            {
-                id: '101',
-                customAdress: 'Lenina St',
-                totalPrice: 1500,
-                itemsCount: 3,
-                status: 'Pending',
-                assignedCourier: null,
-                createdAt: '2026-06-22'
-            }, {
-                id: '102',
-                customAdress: 'Sovetskaya St',
-                totalPrice: 3500,
-                itemsCount: 1,
-                status: 'In_Transit',
-                assignedCourier: {
-                    id: 'C1',
-                    name: 'Ivan Ivanov',
-                    phone: '123456789',
-                    transport: 'Car',
-                    currentOrderId: '102'
-                },
-                createdAt: '2026-06-22'
-            }, {
-                id: '103',
-                customAdress: 'Frunze St',
-                totalPrice: 2500,
-                itemsCount: 2,
-                status: 'Delivered',
-                assignedCourier: {
-                    id: 'C1',
-                    name: 'Petr Petrov',
-                    phone: '33333333',
-                    transport: 'Foot',
-                    currentOrderId: '103'
-                },
-                createdAt: '2026-06-23'
-            }
-        ]
+
+    // Хранение данных в state с загурзкой из localStorage
+    const [state, setState] = useState<DeliveryState>(() => {
+        try {
+            const savedData = localStorage.getItem('delivery_dashboard_state');
+            if (savedData) return JSON.parse(savedData);
+        } catch (e) {
+            console.error('Ошибка чтения localStorage', e);
+        }
+        return InitialState;
     });
+
+    // Загрузка state в localStorage при изменениях
+    useEffect(() => {
+        if (state.status !== 'SUCCESS') return;
+        localStorage.setItem('delivery_dashboard_state', JSON.stringify(state))
+    }, [state])
 
     const updateOrderStatus = (orderId: string, nextStatus: DeliveryStatus) => {
         if (state.status !== 'SUCCESS') return;
+
+        const assignedCourier = state.data.find(order => order.id === orderId);
+        
+
         const updateOrders = state.data.map(order => 
             order.id === orderId ? {... order, status: nextStatus}: order
         );
-        setState({ status: 'SUCCESS', data: updateOrders});
+
+        const updateCouriers = state.couriers.map(courier => 
+
+        )
+        setState({ status: 'SUCCESS', data: updateOrders, couriers: });
     };
 
-    const assignCourierToOrder = (orderId: string, courierName: string) => {
+    // Назначение курьера на заказ
+    const assignCourierToOrder = (orderId: string, courierId: string) => {
         if (state.status !== 'SUCCESS') return;
+        
+        // Ищем курьера с подходящим ID в списке известных курьеров
+        const foundCourier = state.couriers.find(courier => courier.id === courierId);
+
+        if (!foundCourier || foundCourier.currentOrderId !== null) return;
+
         const updateOrders = state.data.map(order => {
             if (order.id === orderId) {
                 return {
                     ...order,
                     status: 'In_Transit' as DeliveryStatus,
-                    assignedCourier: {
-                        id: `C-${Date.now()}`,
-                        name: courierName, 
-                        phone: '89999999999',
-                        transport: 'Bicycle' as const,
-                        currentOrderId: orderId
-                    }
+                    assignedCourier: foundCourier
                 }
             }
             return order;
         });
-        setState({ status: 'SUCCESS', data: updateOrders});
+
+        const updateCouriers = state.couriers.map(courier => {
+            if (courier.id === courierId) {
+                return {
+                    ...courier,
+                    courierId: orderId
+                }
+            }
+            return courier;
+        });
+        setState({ status: 'SUCCESS', data: updateOrders, couriers: updateCouriers});
+    };
+
+    const addCourier = (e: React.SubmitEvent) => {
+        // e.preventDefault();
+        if(!newCourierName.trim() || !selectedTransport) return;
+
+        const newCourier: Courier = {
+            id: `C${Date.now()}`,
+            name: newCourierName || '',
+            phone: '000',
+            transport: selectedTransport,
+            currentOrderId: null
+        };
+
+        setCouriers((prev) => [...prev, newCourier]);
+        setNewCourierName('');
+        setSelectedTransport(null);
     };
 
     return (
         <DeliveryContext.Provider
-            value={{state, updateOrderStatus, assignCourierToOrder}}
+            value={{state, updateOrderStatus, assignCourierToOrder, addCourier}}
         >
             {children}
         </DeliveryContext.Provider>
