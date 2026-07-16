@@ -1,37 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { TransportType } from "../types/delivery";
-import { useDelivery } from "../context/DeliveryContext";
+import { De, useDelivery } from "../context/DeliveryContext";
 
 export const CourierManager = (): JSX.Element => {
 
-    const { }
-
-    // const [couriers, setCouriers] = useState<Courier[]>([
-    //     {id: 'C1', name: 'Иван Иванов', phone: '+79999999999', transport: 'Car', currentOrderId: null},
-    //     {id: 'C2', name: 'Павел Павлович', phone: '+7991112233', transport: 'Bicycle', currentOrderId: null},
-    // ]);
-
-    // const [selectedTransport, setSelectedTransport] = useState<TransportType | null>(null);
-
-    // const [newCourierName, setNewCourierName] = useState<string>('');
-
-    // // Функция добавления 
-    // const handleAddCourier = (e: React.SubmitEvent) => {
-    //     e.preventDefault();
-    //     if(!newCourierName.trim() || !selectedTransport) return;
-
-    //     const newCourier: Courier = {
-    //         id: `C${Date.now()}`,
-    //         name: newCourierName || '',
-    //         phone: '000',
-    //         transport: selectedTransport,
-    //         currentOrderId: null
-    //     };
-
-    //     setCouriers((prev) => [...prev, newCourier]);
-    //     setNewCourierName('');
-    //     setSelectedTransport(null);
-    // };
+    const { state, addCourier } = useDelivery();
 
     return (
         <div

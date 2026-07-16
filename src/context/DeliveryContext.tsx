@@ -81,23 +81,24 @@ export const DeliveryProvider = ({children}: {children: ReactNode}): JSX.Element
     // Загрузка state в localStorage при изменениях
     useEffect(() => {
         if (state.status !== 'SUCCESS') return;
-        localStorage.setItem('delivery_dashboard_state', JSON.stringify(state))
+        localStorage.setItem('delivery_dashboard_state', JSON.stringify(state));
     }, [state])
 
     const updateOrderStatus = (orderId: string, nextStatus: DeliveryStatus) => {
         if (state.status !== 'SUCCESS') return;
 
-        const assignedCourier = state.data.find(order => order.id === orderId);
-        
-
         const updateOrders = state.data.map(order => 
             order.id === orderId ? {... order, status: nextStatus}: order
         );
 
-        const updateCouriers = state.couriers.map(courier => 
-
-        )
-        setState({ status: 'SUCCESS', data: updateOrders, couriers: });
+        const updateCouriers = nextStatus === 'Delivered' || nextStatus === 'Cancelled'
+            ? state.couriers.map(courier => 
+                courier.currentOrderId === orderId 
+                ? {... courier, currentOrderId: null}
+                : courier)
+            : state.couriers
+        
+        setState({ status: 'SUCCESS', data: updateOrders, couriers: updateCouriers});
     };
 
     // Назначение курьера на заказ
@@ -129,24 +130,23 @@ export const DeliveryProvider = ({children}: {children: ReactNode}): JSX.Element
             }
             return courier;
         });
-        setState({ status: 'SUCCESS', data: updateOrders, couriers: updateCouriers});
+        setState({status: 'SUCCESS', data: updateOrders, couriers: updateCouriers});
     };
 
-    const addCourier = (e: React.SubmitEvent) => {
-        // e.preventDefault();
-        if(!newCourierName.trim() || !selectedTransport) return;
+    const addCourier = (name: string, transport: TransportType) => {
+        if (state.status !== 'SUCCESS') return;
+
+        if(!name.trim() || !transport) return;
 
         const newCourier: Courier = {
             id: `C${Date.now()}`,
-            name: newCourierName || '',
+            name: name || '',
             phone: '000',
-            transport: selectedTransport,
+            transport: transport,
             currentOrderId: null
         };
 
-        setCouriers((prev) => [...prev, newCourier]);
-        setNewCourierName('');
-        setSelectedTransport(null);
+        setState({...state, couriers: [...state.couriers, newCourier]});
     };
 
     return (
