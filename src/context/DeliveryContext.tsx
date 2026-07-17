@@ -125,7 +125,7 @@ export const DeliveryProvider = ({children}: {children: ReactNode}): JSX.Element
             if (courier.id === courierId) {
                 return {
                     ...courier,
-                    courierId: orderId
+                    currentOrderId: orderId
                 }
             }
             return courier;

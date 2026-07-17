@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { DeliveryStatus, DeliveryOrder } from "../types/delivery";
+import { useDelivery } from "../context/DeliveryContext";
 
 interface OrderManagementModalProps{
     order: DeliveryOrder;
     onClose: () => void;
     onUpdateStatus: (orderId: string, nextStatus: DeliveryStatus) => void;
-    onAssignCourier: (orderId: string, courierName: string) => void;
+    onAssignCourier: (orderId: string, courierId: string) => void;
 };
 
 export const OrderManagementModal = ({
@@ -14,14 +15,17 @@ export const OrderManagementModal = ({
     onUpdateStatus,
     onAssignCourier
 }: OrderManagementModalProps): JXS.Element => {
-    const [courierInput, setCourierInput] = useState<string>('');
+    const { state } = useDelivery();
+    const [courierSelect, setCourierSelect] = useState<string>('');
     const allStatuses: DeliveryStatus[] = ['Pending', 'In_Transit', 'Delivered', 'Cancelled'];
+
+    const unorderedCouriers = state.couriers.filter(c => c.currentOrderId === null);
     
     const handleCourierSubmit = (e: React.SubmitEvent) => {
         e.preventDefault();
-        if (!courierInput.trim()) return;
-        onAssignCourier(order.id, courierInput.trim());
-        setCourierInput('');
+        if (!courierSelect.trim()) return;
+        onAssignCourier(order.id, courierSelect);
+        setCourierSelect('');
     };
 
     return (
@@ -80,15 +84,17 @@ export const OrderManagementModal = ({
                         <label htmlFor="courier-input">
                             Назначить нового курьера
                         </label>
-                        <input 
+                        <select
                             id="courier-input"
-                            type="text"
-                            value={courierInput}
-                            onChange={
-                                (e: React.ChangeEvent<HTMLInputElement>) => 
-                                setCourierInput(e.target.value)
-                            }
-                        />
+                            value={courierSelect || ''}
+                            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCourierSelect(e.target.value)}
+                            style={{ padding: '6px', border: '1px solid #ccc'}}
+                        >   
+                            <option value='' style={{display: 'none'}} disabled>Веберите курьера</option>
+                            {unorderedCouriers.map(c => (
+                                <option key={c.id} value={c.id}>{c.name}-{c.transport}</option>
+                            ))}
+                        </select>
                         <button type="submit">
                             Назначить
                         </button>

@@ -1,10 +1,21 @@
 import { useState, useContext } from "react";
 import { TransportType } from "../types/delivery";
-import { De, useDelivery } from "../context/DeliveryContext";
+import { useDelivery } from "../context/DeliveryContext";
 
 export const CourierManager = (): JSX.Element => {
 
     const { state, addCourier } = useDelivery();
+    const { couriers } = state;
+
+    const [selectedTransport, setSelectedTransport] = useState<TransportType | null>(null);
+    const [newCourierName, setNewCourierName] = useState<string>('');
+
+    const handleAddCourier = (e: React.SubmitEvent) => {
+        e.preventDefault();
+        addCourier(newCourierName, selectedTransport);
+        setNewCourierName('');
+        setSelectedTransport(null);
+    };
 
     return (
         <div
@@ -21,7 +32,7 @@ export const CourierManager = (): JSX.Element => {
                     display: 'flex',
                     gap: '8px',
                 }}
-            >
+            >   
                 <input 
                     type="text" 
                     value={newCourierName}
