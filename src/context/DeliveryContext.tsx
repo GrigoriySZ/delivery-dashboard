@@ -10,7 +10,7 @@ type DeliveryState =
 interface DeliveryContextType {
     state: DeliveryState;
     updateOrderStatus: (orderId: string, nextStatus: DeliveryStatus) => void;
-    assignCourierToOrder: (orderId: string, courierName: string) => void;
+    assignCourierToOrder: (orderId: string, courierId: string) => void;
     addCourier: (name: string, transport: TransportType) => void;
 }
 

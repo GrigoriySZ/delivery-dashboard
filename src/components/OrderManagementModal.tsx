@@ -14,7 +14,7 @@ export const OrderManagementModal = ({
     onClose,
     onUpdateStatus,
     onAssignCourier
-}: OrderManagementModalProps): JXS.Element => {
+}: OrderManagementModalProps): JSX.Element => {
     const { state } = useDelivery();
     const [courierSelect, setCourierSelect] = useState<string>('');
     const allStatuses: DeliveryStatus[] = ['Pending', 'In_Transit', 'Delivered', 'Cancelled'];
